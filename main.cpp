@@ -4,8 +4,8 @@
  */
 #include <math.h>
 #include <cstdlib>
-
 #include <opencv2/imgproc.hpp>
+
 #include "vecs.hpp"
 #include "util.hpp"
 #include "glsl_emulated.hpp"
@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
     _ratio = resolution._x / resolution._y;
     while(true){
         UTIL::renderImage(frame);
-        UTIL::displayResult(frame);
+        UTIL::displayResult(frame, true);
     }
     return 0;
 }

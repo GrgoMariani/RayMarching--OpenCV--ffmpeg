@@ -12,7 +12,14 @@ vec3 renderXY(vec2 gl_FragCoord);
 
 namespace UTIL{
     
-    void displayResult(cv::Mat& frame){
+    void displayResult(cv::Mat& frame, bool SHOW_FRAME=false){
+        static int num_frame=0;
+        if (SHOW_FRAME){
+            std::ostringstream ss;
+            ss << "FRAME: " << num_frame ;
+            num_frame++;
+            cv::putText(frame, ss.str(), Point(20,20), 0, 0.5, Scalar(0,0,255));
+        }
         for (size_t i = 0; i < frame.dataend - frame.datastart; i++) 
             std::cout << frame.data[i];
         std::this_thread::sleep_for(std::chrono::microseconds(30));
@@ -21,7 +28,7 @@ namespace UTIL{
     void renderImage(Mat& frame){
         uint8_t* pixelPtr = (uint8_t*)frame.data;
         int cn = frame.channels();
-
+        
         for(int y=0; y<frame.rows; y++)
             for(int x=0; x<frame.cols; x++)
             {
@@ -31,6 +38,7 @@ namespace UTIL{
                 pixelPtr[y*frame.cols*cn + x*cn + 1] = result._y; // G
                 pixelPtr[y*frame.cols*cn + x*cn + 2] = result._x; // B
             }
+        
     }
 }
 
