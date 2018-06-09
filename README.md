@@ -17,7 +17,10 @@ There's a lot to be done here as well, such as threading.
 >```
 >g++ main.cpp -std=c++11 -o `pkg-config opencv --cflags --libs` raymarching
 >```
-
+or use
+```
+make
+```
 * ##### Step2: Use
 >```
 >./raymarching | ffmpeg -f rawvideo -pixel_format bgr24 -video_size 320x240 -re -framerate 10  -i - -f mpegts -preset fast -vcodec libx264 udp://localhost:5000

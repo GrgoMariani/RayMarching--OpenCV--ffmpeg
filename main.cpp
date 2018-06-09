@@ -6,9 +6,9 @@
 #include <cstdlib>
 #include <opencv2/imgproc.hpp>
 
-#include "vecs.hpp"
-#include "util.hpp"
-#include "glsl_emulated.hpp"
+#include "libs/vecs.hpp"
+#include "libs/util.hpp"
+#include "libs/glsl_emulated.hpp"
 
 using namespace std;
 using namespace cv;
