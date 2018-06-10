@@ -15,6 +15,13 @@ public:
     double _y;
     double _z;
     double _w;
+    vec(const vec& othervec){
+        this->_x = othervec._x;
+        this->_y = othervec._y;
+        this->_z = othervec._z;
+        this->_w = othervec._w;
+        this->_dim = othervec._dim;
+    }
     vec(double x, double y):_x(x), _y(y){
         this->_z = 0;
         this->_w = 0;
@@ -26,6 +33,9 @@ public:
     }
     vec(double x, double y, double z, double w):_x(x), _y(y), _z(z), _w(w){
         this->_dim = 4;
+    }
+    double getDimension(){
+        return this->_dim;
     }
     double length(){
         return sqrt(this->_x*this->_x + this->_y*this->_y+this->_z*this->_z+this->_w*this->_w);
@@ -61,6 +71,7 @@ public:
         this->clamp_y(_min, _max);
         if (this->_dim > 2) this->clamp_z(_min, _max);
         if (this->_dim > 3) this->clamp_w(_min, _max);
+        return *this;
     }
     /* Overloaded operators*/
 public:
@@ -91,8 +102,27 @@ public:
         this->_w += right._w;
         return *this;
     }
+    vec& operator /= (const double& factor){
+        this->_x /= factor;
+        this->_y /= factor;
+        this->_z /= factor;
+        this->_w /= factor;
+        return *this;
+    }
     /* Reflections and such */
 public:
+    vec& convertTo2D(){
+        this->_z=0, this->_w=0, this->_dim=2;
+        return *this;
+    }
+    vec& convertTo3D(){
+        this->_w=0, this->_dim=3;
+        return *this;
+    }
+    vec& convertTo4D(){
+        this->_dim=4;
+        return *this;
+    }
     
 };
 

@@ -112,6 +112,6 @@ vec3 renderXY(vec2 gl_FragCoord){
 
 
 // to compile use 'g++ main.cpp -std=c++11 -o `pkg-config opencv --cflags --libs` raymarching'
-//./raymarching | ffmpeg -f rawvideo -pixel_format bgr24 -video_size 320x240 -re -framerate 10  -i - -f mpegts -preset fast -vcodec libx264 udp://localhost:5000
+//./raymarching | ffmpeg -f rawvideo -pixel_format bgr24 -video_size 320x240 -i - -f mpegts -preset veryslow -vcodec libx264 udp://localhost:5000
 // Use VLC to check results
 // CTRL+N   and then    udp://@:5000

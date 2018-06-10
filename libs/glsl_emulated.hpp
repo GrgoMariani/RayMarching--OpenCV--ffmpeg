@@ -14,6 +14,12 @@ namespace e_glsl{
         return I-(N*(N^I)*2.0);
     }
     
+    vec normalize(vec I){
+        double dist = I.length();
+        vec result(I);
+        if(dist!=0) result /= dist;
+        return result;
+    }
 }
 
 #endif /* GLSL_EMULATED_HPP */
