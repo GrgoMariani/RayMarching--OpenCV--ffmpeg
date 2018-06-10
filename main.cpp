@@ -83,7 +83,7 @@ vec3 calculateLighting(vec3 pointOnSurface, vec3 surfaceNormal, vec3 lightPositi
     specularStrength = min( diffuseStrength, specularStrength );
     vec3 specularColor = vec3( 255.0, 255.0, 255.0 )*specularStrength;
     
-    vec3 finalColor = (diffuseColor + specularColor);
+    vec3 finalColor = diffuseColor + specularColor;
     
     return finalColor;
 }

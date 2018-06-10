@@ -15,22 +15,21 @@ There's a lot to be done here as well, such as threading.
 * ##### Step1: Compile
 
 >```
->g++ main.cpp -std=c++11 -o `pkg-config opencv --cflags --libs` raymarching
+>g++ main.cpp -std=c++11 -o raymarching `pkg-config opencv --cflags --libs`
 >```
-or use
-```
-make
-```
+>or use
+>
+>``` make ```
 * ##### Step2: Use
 >```
->./raymarching | ffmpeg -f rawvideo -pixel_format bgr24 -video_size 320x240 -re -framerate 10  -i - -f mpegts -preset fast -vcodec libx264 udp://localhost:5000
+>./raymarching | ffmpeg -f rawvideo -pixel_format bgr24 -video_size 320x240 -i - -f mpegts -preset veryslow -vcodec libx264 udp://localhost:5000
 >```
 > Pipe the output directly to ffmpeg with this command
 
 * ##### Step3: Watch
->Open VLC player and use CTRL+N
+>Open VLC player (or SMPlayer) and use CTRL+N (CTRL+U - SMPlayer) to open the stream from URL
 >```
->udp://@:5000
+>udp://@0.0.0.0:5000
 >```
 
 
