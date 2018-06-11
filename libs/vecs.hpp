@@ -102,6 +102,13 @@ public:
         this->_w += right._w;
         return *this;
     }
+    vec& operator *= (const double& factor){
+        this->_x *= factor;
+        this->_y *= factor;
+        this->_z *= factor;
+        this->_w *= factor;
+        return *this;
+    }
     vec& operator /= (const double& factor){
         this->_x /= factor;
         this->_y /= factor;

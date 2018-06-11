@@ -74,16 +74,18 @@ vec calculateLighting(vec pointOnSurface_3d, vec surfaceNormal_3d, vec lightPosi
     /* ^ is short for dot product*/
     double diffuseStrength = e_glsl::clamp(surfaceNormal_3d^fromPointToLight_3d, 0.0, 1.0 );
     
-    vec diffuseColor_c = vec(0.0, 255.0, 0.0)*diffuseStrength;
+    vec diffuseColor_c = vec(0.0, 1.0, 0.0)*diffuseStrength;
     vec reflectedLightVector_3d = ( e_glsl::reflect( vec(0.0, 0.0, 0.0)-fromPointToLight_3d, surfaceNormal_3d ) ).normalize();
     
     vec fromPointToCamera_3d = ( cameraPosition_3d - pointOnSurface_3d ).normalize();
     double specularStrength = pow( e_glsl::clamp( reflectedLightVector_3d^fromPointToCamera_3d, 0.0, 1.0 ), 10.0 );
     
     specularStrength = min( diffuseStrength, specularStrength );
-    vec specularColor_c = vec( 255.0, 255.0, 255.0 )*specularStrength;
+    vec specularColor_c = vec( 1.0, 1.0, 1.0 )*specularStrength;
     
     vec finalColor_c = diffuseColor_c + specularColor_c;
+    finalColor_c.clamp(0, 1);
+    finalColor_c *= 255.0;
     
     return finalColor_c;
 }
