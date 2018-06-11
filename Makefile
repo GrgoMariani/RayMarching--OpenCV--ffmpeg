@@ -1,5 +1,7 @@
 CXX = g++
-CXXFLAGS=-c -Wall -g -std=c++11 -m64
+DEFINES= -DWITH_OPENMP
+CXXFLAGS=-c -Wall -g -std=c++11 -m64 $(DEFINES)
+OPENMP= -fopenmp
 LDFLAGS= -lpthread
 
 # Environment 
@@ -19,11 +21,11 @@ all: $(EXECUTABLE)
 	
 $(EXECUTABLE): $(OBJS)
 	@echo "MAKING EXECUTABLE"
-	$(CXX) -o $(EXECUTABLE) $(OBJS) $(LIBS)
+	$(CXX) -o $(EXECUTABLE) $(OBJS) $(LIBS) $(OPENMP)
 
 main.o: main.cpp
 	@echo "MAKING main.o"
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -c main.cpp
+	$(CXX) $(OPENMP) $(CXXFLAGS) $(LDFLAGS) -c main.cpp
 
 clean:
 	@echo "CLEANING"

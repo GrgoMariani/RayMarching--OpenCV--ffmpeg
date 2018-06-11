@@ -4,7 +4,7 @@
 
 I guess there could have been a lot of better time uses than emulating GLSL shaders in OpenCV and then pipe-ing it to ffmpeg.
 
-There's a lot to be done here as well, such as threading.
+Threading is done via openmp, to disable it remove _DEFINES_ from _CXXFLAGS_ in __Makefile__
 - - - -
 - - - -
 ## HOW TO

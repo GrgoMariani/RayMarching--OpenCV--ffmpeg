@@ -7,6 +7,9 @@
 
 #include <opencv2/imgproc.hpp>
 #include "vecs.hpp"
+#ifdef WITH_OPENMP
+#include <omp.h>
+#endif
 
 vec3 renderXY(vec2 gl_FragCoord);
 
@@ -28,7 +31,9 @@ namespace UTIL{
     void renderImage(Mat& frame){
         uint8_t* pixelPtr = (uint8_t*)frame.data;
         int cn = frame.channels();
-        
+#ifdef WITH_OPENMP
+        #pragma omp parallel for
+#endif
         for(int y=0; y<frame.rows; y++)
             for(int x=0; x<frame.cols; x++)
             {
