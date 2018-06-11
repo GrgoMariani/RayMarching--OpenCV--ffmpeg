@@ -73,6 +73,20 @@ public:
         if (this->_dim > 3) this->clamp_w(_min, _max);
         return *this;
     }
+    vec& vecAbs(){
+        this->_x = abs(this->_x);
+        this->_y = abs(this->_y);
+        this->_z = abs(this->_z);
+        this->_w = abs(this->_w);
+        return *this;
+    }
+    vec& vecMax(double _max){
+        this->_x = max(_max, this->_x);
+        this->_y = max(_max, this->_y);
+        this->_z = max(_max, this->_z);
+        this->_w = max(_max, this->_w);
+        return *this;
+    }
     /* Overloaded operators*/
 public:
     vec operator+(const vec& right){

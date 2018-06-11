@@ -9,17 +9,16 @@
 #include "libs/vecs.hpp"
 #include "libs/util.hpp"
 #include "libs/glsl_emulated.hpp"
+#include "libs/shapes.hpp"
 
 using namespace std;
 using namespace cv;
 
 const vec resolution_2d = vec(320, 240);
 double _ratio=1.0;
-vec cameraPosition_3d(0.0, 0.0, -10.0);
-vec lightPosition_3d(3.0, 4.5, -10.0);
 
 
-/**** This is our program Start . No need to edit this*/
+/**** This is our program Start . No need to edit this main function */
 int main(int argc, char** argv) {
     Mat frame(resolution_2d._y, resolution_2d._x, CV_8UC3, Scalar(0, 0, 0));
     _ratio = resolution_2d._x / resolution_2d._y;
@@ -31,12 +30,8 @@ int main(int argc, char** argv) {
 }
 
 /* Define functions we'll use */
-double sphere(vec p_3d, double radius){
-    return p_3d.length() - radius;
-}
-
 double map(vec p_3d){
-    return sphere(p_3d, 3.0);
+    return shapes::sphere(p_3d, 3.0);
 }
 
 vec getNormal(vec p_3d){
@@ -74,7 +69,7 @@ vec calculateLighting(vec pointOnSurface_3d, vec surfaceNormal_3d, vec lightPosi
     /* ^ is short for dot product*/
     double diffuseStrength = e_glsl::clamp(surfaceNormal_3d^fromPointToLight_3d, 0.0, 1.0 );
     
-    vec diffuseColor_c = vec(0.0, 1.0, 0.0)*diffuseStrength;
+    vec diffuseColor_c = vec(1.0, 0.0, 0.0)*diffuseStrength;
     vec reflectedLightVector_3d = ( e_glsl::reflect( vec(0.0, 0.0, 0.0)-fromPointToLight_3d, surfaceNormal_3d ) ).normalize();
     
     vec fromPointToCamera_3d = ( cameraPosition_3d - pointOnSurface_3d ).normalize();
@@ -97,6 +92,8 @@ vec renderXY(vec gl_FragCoord_2d){
     vec uv_2d = (gl_FragCoord_2d/resolution_2d)*2.0 - vec(1.0, 1.0);
     uv_2d._x *= _ratio;
     
+    static vec cameraPosition_3d(0.0, 0.0, -10.0);
+    static vec lightPosition_3d(3.0, 4.5, -10.0);
     vec cameraDirection_3d = vec(uv_2d._x, uv_2d._y, 1.0).normalize();
     
     vec pointOnSurface_3d(0.0, 0.0, 0.0);

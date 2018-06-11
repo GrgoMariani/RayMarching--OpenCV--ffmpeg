@@ -24,12 +24,12 @@ namespace UTIL{
             num_frame++;
             cv::putText(frame, ss.str(), Point(20,20), 0, 0.5, Scalar(0,0,255));
         }
-        for (size_t i = 0; i < frame.dataend - frame.datastart; i++) 
+        for (size_t i = 0; i < (size_t)(frame.dataend - frame.datastart); i++) 
             std::cout << frame.data[i];
         std::this_thread::sleep_for(std::chrono::microseconds(30));
     }
  
-    void renderImage(Mat& frame){
+    void renderImage(Mat& frame, bool FLIP_Y=true){
         uint8_t* pixelPtr = (uint8_t*)frame.data;
         int cn = frame.channels();
         
@@ -40,7 +40,9 @@ namespace UTIL{
         for(int y=0; y<frame.rows; y++)
             for(int x=0; x<frame.cols; x++)
             {
-                vec gl_coord_2d(x,y);
+                int _y = y;
+                if(FLIP_Y) _y=frame.rows-y-1;
+                vec gl_coord_2d(x, _y);
                 vec result = renderXY(gl_coord_2d);
                 pixelPtr[y*frame.cols*cn + x*cn + 0] = result._z; // B
                 pixelPtr[y*frame.cols*cn + x*cn + 1] = result._y; // G
