@@ -50,6 +50,14 @@ public:
         }
         return *this;
     }
+    vec& cross(vec B){
+        //only vec3-s for now
+        double _x =  this->_y*B._z - this->_z*B._y;
+        double _y = -this->_x*B._z + this->_z*B._x;
+        double _z =  this->_x*B._y - this->_y*B._x;
+        this->_x=_x, this->_y=_y, this->_z=_z, this->_dim=3;
+        return *this;
+    }
     vec& clamp_x(double _min, double _max){
         this->_x = min(max(this->_x, _min), _max);
         return *this;

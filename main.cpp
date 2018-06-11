@@ -15,6 +15,11 @@ using namespace std;
 using namespace cv;
 
 const vec resolution_2d = vec(320, 240);
+
+const int MAX_STEPS=100;
+const double MAX_DISTANCE=10000.0;
+const double EPSILON = 0.001;
+
 double _ratio=1.0;
 
 
@@ -35,16 +40,15 @@ double map(vec p_3d){
 }
 
 vec getNormal(vec p_3d){
-    double _delta = 0.001;
-    double deltaX = map(p_3d+vec(_delta, 0.0, 0.0)) - map(p_3d-vec(_delta, 0.0, 0.0));
-    double deltaY = map(p_3d+vec(0.0, _delta, 0.0)) - map(p_3d-vec(0.0, _delta, 0.0));
-    double deltaZ = map(p_3d+vec(0.0, 0.0, _delta)) - map(p_3d-vec(0.0, 0.0, _delta));
+    double deltaX = map(p_3d+vec(EPSILON, 0.0, 0.0)) - map(p_3d-vec(EPSILON, 0.0, 0.0));
+    double deltaY = map(p_3d+vec(0.0, EPSILON, 0.0)) - map(p_3d-vec(0.0, EPSILON, 0.0));
+    double deltaZ = map(p_3d+vec(0.0, 0.0, EPSILON)) - map(p_3d-vec(0.0, 0.0, EPSILON));
     return vec(deltaX, deltaY, deltaZ).normalize();
 }
 
 float trace(vec origin_3d, vec direction_3d, vec& p_3d){
     double totalDistanceTraveled = 0.0;
-    for(int i=0; i<32; ++i){
+    for(int i=0; i<MAX_STEPS; ++i){
         p_3d = origin_3d + direction_3d*totalDistanceTraveled;
         double distanceFromPointOnRayToClosestObjectInScene = map( p_3d );
         totalDistanceTraveled += distanceFromPointOnRayToClosestObjectInScene;
@@ -54,7 +58,7 @@ float trace(vec origin_3d, vec direction_3d, vec& p_3d){
             break;
         }
         
-        if( totalDistanceTraveled > 10000.0 )
+        if( totalDistanceTraveled > MAX_DISTANCE )
         {
             totalDistanceTraveled = 0.0;
             break;

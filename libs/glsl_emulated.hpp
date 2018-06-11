@@ -20,6 +20,14 @@ namespace e_glsl{
         if(dist!=0) result /= dist;
         return result;
     }
+    
+    vec cross(vec A, vec B){
+        //only vec3-s for now
+        double _x =  A._y*B._z -A._z*B._y;
+        double _y = -A._x*B._z +A._z*B._x;
+        double _z =  A._x*B._y -A._y*B._x;
+        return vec(_x, _y, _z);
+    }
 }
 
 #endif /* GLSL_EMULATED_HPP */
