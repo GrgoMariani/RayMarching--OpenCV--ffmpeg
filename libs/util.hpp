@@ -1,17 +1,18 @@
 #ifndef UTIL_HPP
 #define UTIL_HPP
 
+#ifdef WITH_OPENMP
+#include <omp.h>
+#endif
+
 #include <chrono>
 #include <thread>
 #include <iostream>
 
 #include <opencv2/imgproc.hpp>
 #include "vecs.hpp"
-#ifdef WITH_OPENMP
-#include <omp.h>
-#endif
 
-vec3 renderXY(vec2 gl_FragCoord);
+vec renderXY(vec gl_FragCoord_2d);
 
 namespace UTIL{
     
@@ -31,17 +32,19 @@ namespace UTIL{
     void renderImage(Mat& frame){
         uint8_t* pixelPtr = (uint8_t*)frame.data;
         int cn = frame.channels();
-#ifdef WITH_OPENMP
+        
+        
+        #ifdef WITH_OPENMP
         #pragma omp parallel for
-#endif
+        #endif
         for(int y=0; y<frame.rows; y++)
             for(int x=0; x<frame.cols; x++)
             {
-                vec2 gl_coord(x,y);
-                vec3 result = renderXY(gl_coord);
-                pixelPtr[y*frame.cols*cn + x*cn + 0] = result._z; // R
+                vec gl_coord_2d(x,y);
+                vec result = renderXY(gl_coord_2d);
+                pixelPtr[y*frame.cols*cn + x*cn + 0] = result._z; // B
                 pixelPtr[y*frame.cols*cn + x*cn + 1] = result._y; // G
-                pixelPtr[y*frame.cols*cn + x*cn + 2] = result._x; // B
+                pixelPtr[y*frame.cols*cn + x*cn + 2] = result._x; // R
             }
         
     }
@@ -49,4 +52,3 @@ namespace UTIL{
 
 
 #endif /* UTIL_HPP */
-

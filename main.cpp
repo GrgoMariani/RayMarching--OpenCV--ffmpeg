@@ -13,16 +13,16 @@
 using namespace std;
 using namespace cv;
 
-const vec2 resolution = vec2(320, 240);
+const vec resolution_2d = vec(320, 240);
 double _ratio=1.0;
-vec3 cameraPosition(0.0, 0.0, -10.0);
-vec3 lightPosition(3.0, 4.5, -8.0);
+vec cameraPosition_3d(0.0, 0.0, -10.0);
+vec lightPosition_3d(3.0, 4.5, -10.0);
 
 
 /**** This is our program Start . No need to edit this*/
 int main(int argc, char** argv) {
-    Mat frame(resolution._y, resolution._x, CV_8UC3, Scalar(0, 0, 0));
-    _ratio = resolution._x / resolution._y;
+    Mat frame(resolution_2d._y, resolution_2d._x, CV_8UC3, Scalar(0, 0, 0));
+    _ratio = resolution_2d._x / resolution_2d._y;
     while(true){
         UTIL::renderImage(frame);
         UTIL::displayResult(frame, true);
@@ -31,27 +31,27 @@ int main(int argc, char** argv) {
 }
 
 /* Define functions we'll use */
-double sphere(vec3 p, double radius){
-    return p.length() - radius;
+double sphere(vec p_3d, double radius){
+    return p_3d.length() - radius;
 }
 
-double map(vec3 p){
-    return sphere(p, 3.0);
+double map(vec p_3d){
+    return sphere(p_3d, 3.0);
 }
 
-vec3 getNormal(vec3 p){
+vec getNormal(vec p_3d){
     double _delta = 0.001;
-    double deltaX = map(p+vec3(_delta, 0.0, 0.0)) - map(p-vec3(_delta, 0.0, 0.0));
-    double deltaY = map(p+vec3(0.0, _delta, 0.0)) - map(p-vec3(0.0, _delta, 0.0));
-    double deltaZ = map(p+vec3(0.0, 0.0, _delta)) - map(p-vec3(0.0, 0.0, _delta));
-    return vec3(deltaX, deltaY, deltaZ).normalize();
+    double deltaX = map(p_3d+vec(_delta, 0.0, 0.0)) - map(p_3d-vec(_delta, 0.0, 0.0));
+    double deltaY = map(p_3d+vec(0.0, _delta, 0.0)) - map(p_3d-vec(0.0, _delta, 0.0));
+    double deltaZ = map(p_3d+vec(0.0, 0.0, _delta)) - map(p_3d-vec(0.0, 0.0, _delta));
+    return vec(deltaX, deltaY, deltaZ).normalize();
 }
 
-float trace(vec3 origin, vec3 direction, vec3& p){
+float trace(vec origin_3d, vec direction_3d, vec& p_3d){
     double totalDistanceTraveled = 0.0;
     for(int i=0; i<32; ++i){
-        p = origin + direction*totalDistanceTraveled;
-        double distanceFromPointOnRayToClosestObjectInScene = map( p );
+        p_3d = origin_3d + direction_3d*totalDistanceTraveled;
+        double distanceFromPointOnRayToClosestObjectInScene = map( p_3d );
         totalDistanceTraveled += distanceFromPointOnRayToClosestObjectInScene;
         
         if( distanceFromPointOnRayToClosestObjectInScene < 0.0001 )
@@ -69,45 +69,45 @@ float trace(vec3 origin, vec3 direction, vec3& p){
 }
 
 
-vec3 calculateLighting(vec3 pointOnSurface, vec3 surfaceNormal, vec3 lightPosition, vec3 cameraPosition){
-    vec3 fromPointToLight = (lightPosition - pointOnSurface).normalize();
+vec calculateLighting(vec pointOnSurface_3d, vec surfaceNormal_3d, vec lightPosition_3d, vec cameraPosition_3d){
+    vec fromPointToLight_3d = (lightPosition_3d - pointOnSurface_3d).normalize();
     /* ^ is short for dot product*/
-    double diffuseStrength = e_glsl::clamp(surfaceNormal^fromPointToLight, 0.0, 1.0 );
+    double diffuseStrength = e_glsl::clamp(surfaceNormal_3d^fromPointToLight_3d, 0.0, 1.0 );
     
-    vec3 diffuseColor = vec3(0.0, 255.0, 0.0)*diffuseStrength;
-    vec3 reflectedLightVector = ( e_glsl::reflect( vec3(0.0, 0.0, 0.0)-fromPointToLight, surfaceNormal ) ).normalize();
+    vec diffuseColor_c = vec(0.0, 255.0, 0.0)*diffuseStrength;
+    vec reflectedLightVector_3d = ( e_glsl::reflect( vec(0.0, 0.0, 0.0)-fromPointToLight_3d, surfaceNormal_3d ) ).normalize();
     
-    vec3 fromPointToCamera = ( cameraPosition - pointOnSurface ).normalize();
-    double specularStrength = pow( e_glsl::clamp( reflectedLightVector^fromPointToCamera, 0.0, 1.0 ), 10.0 );
+    vec fromPointToCamera_3d = ( cameraPosition_3d - pointOnSurface_3d ).normalize();
+    double specularStrength = pow( e_glsl::clamp( reflectedLightVector_3d^fromPointToCamera_3d, 0.0, 1.0 ), 10.0 );
     
     specularStrength = min( diffuseStrength, specularStrength );
-    vec3 specularColor = vec3( 255.0, 255.0, 255.0 )*specularStrength;
+    vec specularColor_c = vec( 255.0, 255.0, 255.0 )*specularStrength;
     
-    vec3 finalColor = diffuseColor + specularColor;
+    vec finalColor_c = diffuseColor_c + specularColor_c;
     
-    return finalColor;
+    return finalColor_c;
 }
 
 /**** This function takes care of each pixel rendering */
-vec3 renderXY(vec2 gl_FragCoord){
+vec renderXY(vec gl_FragCoord_2d){
     /* gl_FragCoord are current coordinates */
     /* uv are our screen coordinates        */
-    vec2 uv = (gl_FragCoord/resolution)*2.0 - vec2(1.0, 1.0);
-    uv._x *= _ratio;
+    vec uv_2d = (gl_FragCoord_2d/resolution_2d)*2.0 - vec(1.0, 1.0);
+    uv_2d._x *= _ratio;
     
-    vec3 cameraDirection = vec3(uv._x, uv._y, 1.0).normalize();
+    vec cameraDirection_3d = vec(uv_2d._x, uv_2d._y, 1.0).normalize();
     
-    vec3 pointOnSurface(0.0, 0.0, 0.0);
-    double distanceToClosestPointInScene = trace(cameraPosition, cameraDirection, pointOnSurface);
+    vec pointOnSurface_3d(0.0, 0.0, 0.0);
+    double distanceToClosestPointInScene = trace(cameraPosition_3d, cameraDirection_3d, pointOnSurface_3d);
     
-    vec3 finalColor = vec3(0.0, 0.0, 0.0);
+    vec finalColor_c(0.0, 0.0, 0.0);
     
     if( distanceToClosestPointInScene>0.0 ){
-        vec3 surfaceNormal = getNormal(pointOnSurface);
-        finalColor = calculateLighting(pointOnSurface, surfaceNormal, lightPosition, cameraPosition);
+        vec surfaceNormal_3d = getNormal(pointOnSurface_3d);
+        finalColor_c = calculateLighting(pointOnSurface_3d, surfaceNormal_3d, lightPosition_3d, cameraPosition_3d);
     }
     
-    return finalColor;
+    return finalColor_c;
 }
 
 

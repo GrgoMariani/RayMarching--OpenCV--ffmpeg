@@ -10,7 +10,7 @@ namespace e_glsl{
         return min(max(value, _min), _max);
     }
 
-    vec3 reflect(vec3 I, vec3 N){
+    vec reflect(vec I, vec N){
         return I-(N*(N^I)*2.0);
     }
     
