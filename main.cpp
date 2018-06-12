@@ -36,7 +36,8 @@ int main(int argc, char** argv) {
 
 /* Define functions we'll use */
 double map(vec p_3d){
-    return shapes::sphere(p_3d, 3.0);
+    using namespace shapes;
+    return sphere(REPEAT(p_3d, vec(2, 2, 2)), 2);
 }
 
 vec getNormal(vec p_3d){

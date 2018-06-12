@@ -76,7 +76,6 @@ namespace shapes{
         return ( (p_3d/r_3d).length() - 1.0) * min(min(r_3d._x,r_3d._y),r_3d._z);
     }
 
-
     double UNION( double d1, double d2 )
     {
         return min(d1,d2);

@@ -113,10 +113,13 @@ public:
         return this->_x*right._x + this->_y*right._y + this->_z*right._z + this->_w*right._w;
     }
     vec operator%(const vec& right){  // modulo - only vec3
+        /** Is this it ? */
         vec result(*this);
         vec y(right);
+        double _ratio = floor(result.length()/y.length());
+        int _sign = ((result^y)>0) ? 1:-1;
         if(y.length()){
-            result -= y*(floor(result.length()/y.length()));
+            result -= y*(_ratio*_sign);
         }
         return result;
     }
