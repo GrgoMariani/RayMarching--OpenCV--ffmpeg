@@ -106,8 +106,19 @@ public:
     vec operator*(const double& right){
         return vec(this->_x*right, this->_y*right, this->_z*right, this->_w*right);
     }
-    double operator^(const vec& right){  //DOT PRODUCT
-        return this->_x*right._x + this->_y*right._y+this->_z*right._z+this->_w*right._w;
+    vec operator/(const double& right){
+        return vec(this->_x/right, this->_y/right, this->_z/right, this->_w/right);
+    }
+    double operator^(const vec& right){  // DOT PRODUCT
+        return this->_x*right._x + this->_y*right._y + this->_z*right._z + this->_w*right._w;
+    }
+    vec operator%(const vec& right){  // modulo - only vec3
+        vec result(*this);
+        vec y(right);
+        if(y.length()){
+            result -= y*(floor(result.length()/y.length()));
+        }
+        return result;
     }
     vec operator/(const vec& right){
         double result_x = (right._x)?this->_x/right._x:1.0;
@@ -122,6 +133,13 @@ public:
         this->_y += right._y;
         this->_z += right._z;
         this->_w += right._w;
+        return *this;
+    }
+    vec& operator -= (const vec& right){
+        this->_x -= right._x;
+        this->_y -= right._y;
+        this->_z -= right._z;
+        this->_w -= right._w;
         return *this;
     }
     vec& operator *= (const double& factor){

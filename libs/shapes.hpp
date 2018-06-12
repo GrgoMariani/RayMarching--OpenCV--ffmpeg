@@ -11,10 +11,6 @@ namespace shapes{
         return p_3d.length() - radius;
     }
     
-    double sphere(vec p_3d, vec center_3d, double radius){
-        return (p_3d-center_3d).length() - radius;
-    }
-    
     double udBox( vec p_3d, vec b_3d )
     {
         return (p_3d.vecAbs()-b_3d).vecMax(0.0).length();
@@ -96,12 +92,12 @@ namespace shapes{
         return max(d1,d2);
     }
     
-    
-    /*double REPEAT( vec p_3d, vec c_3d, void primitive )
+    vec REPEAT( vec p_3d, vec c_3d)
     {
-        vec q_3d = p_3d%c_3d-c_3d*0.5;
-        return primitive( q_3d );
-    }*/
+        // usage:  sphere(REPEAT(p_3d), 5)
+        vec q_3d = (p_3d%c_3d)-(c_3d/2.0);
+        return q_3d;
+    }
     
 
     // Shapes added from
