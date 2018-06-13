@@ -23,20 +23,19 @@ namespace shapes{
 
     double sdTorus( vec p_3d, vec t_2d )
     {
-        vec p_3dxz(p_3d._x, p_3d._z);
-        vec q_2d = vec(p_3dxz.length()-t_2d._x,p_3d._y);
+        vec q_2d = vec(p_3d.projectToPlaneXZ().length()-t_2d._x,p_3d._y);
         return q_2d.length()-t_2d._y;
     }
 
     double sdCylinder( vec p_3d, vec c_3d )
     {
-        return (vec(p_3d._x, p_3d._z)-vec(c_3d._x, c_3d._y)).length()-c_3d._z;
+        return (p_3d.projectToPlaneXZ().switchYZ()-c_3d.projectToPlaneXY()).length()-c_3d._z;
     }
     
     double sdCone( vec p_3d, vec c_2d )
     {
         c_2d.normalize();
-        double q = vec(p_3d._x, p_3d._y).length();
+        double q = p_3d.projectToPlaneXY().length();
         return c_2d^vec(q, p_3d._z);
     }
     
@@ -67,13 +66,13 @@ namespace shapes{
 
     double sdCappedCylinder( vec p_3d, vec h_2d )
     {
-        vec d_2d = vec(vec(p_3d._x, p_3d._z).length(), p_3d._y).vecAbs() - h_2d;
-        return min(max(d_2d._x,d_2d._y),0.0) + d_2d.vecMax(0.0).length();
+        vec d_2d = vec(p_3d.projectToPlaneXZ().length(), p_3d._y).vecAbs() - h_2d;
+        return min(max(d_2d._x, d_2d._y),0.0) + d_2d.vecMax(0.0).length();
     }
     
     double sdEllipsoid( vec p_3d, vec r_3d)
     {
-        return ( (p_3d/r_3d).length() - 1.0) * min(min(r_3d._x,r_3d._y),r_3d._z);
+        return ( (p_3d/r_3d).length() - 1.0) * min(min(r_3d._x, r_3d._y),r_3d._z);
     }
 
     double UNION( double d1, double d2 )

@@ -1,6 +1,6 @@
 CXX = g++
 DEFINES= -DWITH_OPENMP
-CXXFLAGS=-c -Wall -g -std=c++11 -m64 $(DEFINES)
+CXXFLAGS=-c -m64 -O3 -Wall -g -std=c++11 $(DEFINES)
 OPENMP= -fopenmp
 LDFLAGS= -lpthread
 

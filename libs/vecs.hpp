@@ -173,6 +173,41 @@ public:
         this->_dim=4;
         return *this;
     }
+    vec& projectToPlaneXY(){
+        this->_z=0;
+        return *this;
+    }
+    vec& projectToPlaneXZ(){
+        this->_y=0;
+        return *this;
+    }
+    vec& projectToPlaneYZ(){
+        this->_x=0;
+        return *this;
+    }
+    vec& projectToVector(vec& _vec){
+        double factor = (this->operator^(_vec))/(_vec^_vec);
+        this->operator*=(factor);
+        return *this;
+    }
+    vec& switchXY(){
+        double temp = this->_x;
+        this->_x = this->_y;
+        this->_y = temp;
+        return *this;
+    }
+    vec& switchXZ(){
+        double temp = this->_x;
+        this->_x = this->_z;
+        this->_z = temp;
+        return *this;
+    }
+    vec& switchYZ(){
+        double temp = this->_z;
+        this->_z = this->_y;
+        this->_y = temp;
+        return *this;
+    }
     
 };
 

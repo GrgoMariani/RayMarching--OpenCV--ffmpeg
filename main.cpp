@@ -1,22 +1,25 @@
 /* Inspired by the tutorial @ http://xdpixel.com/ray-marching-101-part-2/ */
-/*
- Grgo Mariani
- */
-#include <math.h>
+/* Grgo Mariani                                                                                                                                     *
+ *    READ THIS FIRST                                                                                                                               *
+ * to compile use 'g++ main.cpp -std=c++11 -o `pkg-config opencv --cflags --libs` raymarching'                                                      *
+ * ./raymarching | ffmpeg -f rawvideo -pixel_format bgr24 -video_size 320x240 -i - -f mpegts -preset veryslow -vcodec libx264 udp://localhost:5000  *
+ * Use VLC to check results    (CTRL+N   and then    udp://@:5000)                                                                                  */
+
 #include <cstdlib>
 #include <opencv2/imgproc.hpp>
 
+#include "libs/globals.hpp"
 #include "libs/vecs.hpp"
 #include "libs/util.hpp"
-#include "libs/glsl_emulated.hpp"
-#include "libs/shapes.hpp"
+
+#include "render.hpp"
 
 using namespace std;
 using namespace cv;
 
 const vec resolution_2d = vec(320, 240);
 
-const int MAX_STEPS=100;
+const int MAX_STEPS=32;
 const double MAX_DISTANCE=10000.0;
 const double EPSILON = 0.001;
 
@@ -34,66 +37,12 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-/* Define functions we'll use */
-double map(vec p_3d){
-    using namespace shapes;
-    return sphere(REPEAT(p_3d, vec(2, 2, 2)), 2);
-}
-
-vec getNormal(vec p_3d){
-    double deltaX = map(p_3d+vec(EPSILON, 0.0, 0.0)) - map(p_3d-vec(EPSILON, 0.0, 0.0));
-    double deltaY = map(p_3d+vec(0.0, EPSILON, 0.0)) - map(p_3d-vec(0.0, EPSILON, 0.0));
-    double deltaZ = map(p_3d+vec(0.0, 0.0, EPSILON)) - map(p_3d-vec(0.0, 0.0, EPSILON));
-    return vec(deltaX, deltaY, deltaZ).normalize();
-}
-
-float trace(vec origin_3d, vec direction_3d, vec& p_3d){
-    double totalDistanceTraveled = 0.0;
-    for(int i=0; i<MAX_STEPS; ++i){
-        p_3d = origin_3d + direction_3d*totalDistanceTraveled;
-        double distanceFromPointOnRayToClosestObjectInScene = map( p_3d );
-        totalDistanceTraveled += distanceFromPointOnRayToClosestObjectInScene;
-        
-        if( distanceFromPointOnRayToClosestObjectInScene < 0.0001 )
-        {
-            break;
-        }
-        
-        if( totalDistanceTraveled > MAX_DISTANCE )
-        {
-            totalDistanceTraveled = 0.0;
-            break;
-        }
-    }
-    return totalDistanceTraveled;
-}
-
-
-vec calculateLighting(vec pointOnSurface_3d, vec surfaceNormal_3d, vec lightPosition_3d, vec cameraPosition_3d){
-    vec fromPointToLight_3d = (lightPosition_3d - pointOnSurface_3d).normalize();
-    /* ^ is short for dot product*/
-    double diffuseStrength = e_glsl::clamp(surfaceNormal_3d^fromPointToLight_3d, 0.0, 1.0 );
-    
-    vec diffuseColor_c = vec(1.0, 0.0, 0.0)*diffuseStrength;
-    vec reflectedLightVector_3d = ( e_glsl::reflect( vec(0.0, 0.0, 0.0)-fromPointToLight_3d, surfaceNormal_3d ) ).normalize();
-    
-    vec fromPointToCamera_3d = ( cameraPosition_3d - pointOnSurface_3d ).normalize();
-    double specularStrength = pow( e_glsl::clamp( reflectedLightVector_3d^fromPointToCamera_3d, 0.0, 1.0 ), 10.0 );
-    
-    specularStrength = min( diffuseStrength, specularStrength );
-    vec specularColor_c = vec( 1.0, 1.0, 1.0 )*specularStrength;
-    
-    vec finalColor_c = diffuseColor_c + specularColor_c;
-    finalColor_c.clamp(0, 1);
-    finalColor_c *= 255.0;
-    
-    return finalColor_c;
-}
-
-/**** This function takes care of each pixel rendering */
+/**** renderXY takes care of each pixel rendering                     */
+/*    WRITE YOUR CODE HERE                                            */
+/*    currently it calls the methods defined in render.hpp            */
 vec renderXY(vec gl_FragCoord_2d){
-    /* gl_FragCoord are current coordinates */
-    /* uv are our screen coordinates        */
+    // gl_FragCoord_2d are current coordinates 
+    // uv_2d are our modified screen coordinates        
     vec uv_2d = (gl_FragCoord_2d/resolution_2d)*2.0 - vec(1.0, 1.0);
     uv_2d._x *= _ratio;
     
@@ -114,8 +63,3 @@ vec renderXY(vec gl_FragCoord_2d){
     return finalColor_c;
 }
 
-
-// to compile use 'g++ main.cpp -std=c++11 -o `pkg-config opencv --cflags --libs` raymarching'
-//./raymarching | ffmpeg -f rawvideo -pixel_format bgr24 -video_size 320x240 -i - -f mpegts -preset veryslow -vcodec libx264 udp://localhost:5000
-// Use VLC to check results
-// CTRL+N   and then    udp://@:5000
